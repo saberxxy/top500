@@ -1,0 +1,130 @@
+
+# 分析top500超级计算机
+
+"""
+1、超级计算机的国家保有量
+2、拥有超级计算机的国家所拥有的最好的计算机的最高的排名
+3、超级计算机平均每核的计算能力（实际最大性能Rmax）
+4、计算能力与功耗的关系
+5、实际计算能力与理论计算能力的差距
+"""
+
+import pandas as pd
+import numpy as np
+import cx_Oracle as cxo
+import configparser
+import matplotlib.pyplot as plt
+
+
+# 获取数据库连接
+def getConfig():
+    cf = configparser.ConfigParser()
+    cf.read("config.conf")
+    oracleHost = str(cf.get("oracle", "ip"))
+    oraclePort = int(cf.get("oracle", "port"))
+    oracleUser = str(cf.get("oracle", "username"))
+    oraclePassword = str(cf.get("oracle", "password"))
+    oracleDatabaseName = str(cf.get("oracle", "databasename"))
+    oracleConn = oracleUser + '/' + oraclePassword + '@' + oracleHost + '/' + oracleDatabaseName
+    conn = cxo.connect(oracleConn)
+    cursor = conn.cursor()
+    print("已获取数据库连接")
+    return cursor
+
+# 数据入库
+def inputDB(cursor):
+    df = pd.read_excel('SupercomputerTop500.xlsx', encoding='utf-8')
+    # 处理缺失值
+    df = df.fillna(0)
+    dfLen = len(df)
+    # print (df['Rmax'])
+    for k in range(0, dfLen):
+        df2 = df[k:k + 1]
+        # print(type(df2['Cores']))
+        cursor.execute("insert into top500 values(:rank, :site, :country, :name, :cpu, :org, :cores, "
+                   ":rmax, :rpeak, :power)" , (
+            str(list(df2['Rank'])[0]), str(list(df2['Site'])[0]), str(list(df2['Country'])[0]),
+            str(list(df2['Name'])[0]), str(list(df2['CPU'])[0]), str(list(df2['Org'])[0]),
+            str(list(df2['Cores'])[0]),
+            round(float(df2['Rmax']), 3), round(float(df2['Rpeak']), 3), round(float(df2['Power']), 3)
+        ))
+        cursor.execute("commit")
+        print('一条记录入库完毕')
+
+# 分析国家保有量
+def computerOfCountry(cursor):
+    country = []
+    number = []
+    sql = "select country, count(1) from top500 group by country"
+    for x in cursor.execute(sql).fetchall():
+        country.append(x[0])
+        number.append(x[1])
+    return country, number
+
+# 获取最大排名
+def maxRank(cursor):
+    country = []
+    rank = []
+    sql = "select country, min(rank) from top500 group by country"
+    for x in cursor.execute(sql).fetchall():
+        country.append(x[0])
+        rank.append(x[1])
+    return country, rank
+
+# 平均每核的计算能力
+def avgCore(cursor):
+    rank = []
+    name = []
+    country = []
+    avgcore = []
+    sql = "select rank, name, country, round(rmax/cores, 6) avgcore from top500 order by avgcore desc"
+    for x in cursor.execute(sql).fetchall():
+        rank.append(x[0])
+        name.append(x[1])
+        country.append(x[2])
+        avgcore.append(x[3])
+    return rank, name, country, avgcore
+
+# 计算能力与功耗的关系
+def cpPower(cursor):
+    rmax = []
+    power = []
+    sql = "select rmax, power from top500 order by power desc"
+    for x in cursor.execute(sql).fetchall():
+        rmax.append(x[0])
+        power.append(x[1])
+    return rmax, power
+
+# 实际计算能力与理论计算能力的差距
+def rmaxRpeak(cursor):
+    rank = []
+    name = []
+    country = []
+    rR = []
+    sql = "select rank, name, country, round(rmax/rpeak, 4) a from top500 order by a desc"
+    for x in cursor.execute(sql).fetchall():
+        rank.append(x[0])
+        name.append(x[1])
+        country.append(x[2])
+        rR.append(x[3])
+    return rank, name, country, rR
+
+def main():
+    cursor = getConfig()
+    # 数据入库
+    # inputDB(cursor)
+    # 分析国家保有量
+    # country, number = computerOfCountry(cursor)
+    # 分析国家最高排名
+    # country, rank = maxRank(cursor)
+    # 每核平均计算能力
+    # rank, name, country, avgcore = avgCore(cursor)
+    # 计算能力与核数的关系
+    # rmax, power = cpPower(cursor)
+    # 实际计算能力与理论计算能力的差距
+    rank, name, country, rR = rmaxRpeak(cursor)
+    print(rank, name, country, rR)
+
+
+if __name__ == '__main__':
+    main()

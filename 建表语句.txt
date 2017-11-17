@@ -1,0 +1,11 @@
+create table top500
+(rank number(5) primary key,
+site varchar2(1000),
+country varchar2(1000),
+name varchar2(1000),
+cpu varchar2(1000),
+org varchar2(1000),
+cores number(20, 3),
+rmax number(10, 3),
+rpeak number(10, 3),
+power number(10, 3));
