@@ -59,7 +59,16 @@ def computerOfCountry(cursor):
     for x in cursor.execute(sql).fetchall():
         country.append(x[0])
         number.append(x[1])
-    return country, number
+    # 处理为前台可接受的格式
+    dict1 = dict(zip(country, number))
+    data = []
+    for c, n in dict1.items():
+        a = {}
+        a['country'] = c
+        a['number'] = n
+        data.append(a)
+
+    return data
 
 # 获取最大排名
 def maxRank(cursor):
@@ -114,7 +123,7 @@ def main():
     # 数据入库
     # inputDB(cursor)
     # 分析国家保有量
-    # country, number = computerOfCountry(cursor)
+    a = computerOfCountry(cursor)
     # 分析国家最高排名
     # country, rank = maxRank(cursor)
     # 每核平均计算能力
@@ -122,9 +131,20 @@ def main():
     # 计算能力与核数的关系
     # rmax, power = cpPower(cursor)
     # 实际计算能力与理论计算能力的差距
-    rank, name, country, rR = rmaxRpeak(cursor)
-    print(rank, name, country, rR)
+    # rank, name, country, rR = rmaxRpeak(cursor)
+    # print(rank, name, country, rR)
 
 
 if __name__ == '__main__':
+    # a = ['A', 'B', 'C']
+    # b = [1, 2, 3]
+    # c = []
+    # flag = dict(zip(a, b))
+    # for t1, t2 in flag.items():
+    #     tmp = {}
+    #     tmp['name'] = t1
+    #     tmp['number'] = t2
+    #     c.append(tmp)
+    # print(c)
+
     main()
