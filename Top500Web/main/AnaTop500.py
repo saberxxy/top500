@@ -15,21 +15,7 @@ import cx_Oracle as cxo
 import configparser
 import matplotlib.pyplot as plt
 
-
-# 获取数据库连接
-def getConfig():
-    cf = configparser.ConfigParser()
-    cf.read("config.conf")
-    oracleHost = str(cf.get("oracle", "ip"))
-    oraclePort = int(cf.get("oracle", "port"))
-    oracleUser = str(cf.get("oracle", "username"))
-    oraclePassword = str(cf.get("oracle", "password"))
-    oracleDatabaseName = str(cf.get("oracle", "databasename"))
-    oracleConn = oracleUser + '/' + oraclePassword + '@' + oracleHost + '/' + oracleDatabaseName
-    conn = cxo.connect(oracleConn)
-    cursor = conn.cursor()
-    print("已获取数据库连接")
-    return cursor
+import GetOracleConn as goc
 
 # 数据入库
 def inputDB(cursor):
@@ -119,7 +105,7 @@ def rmaxRpeak(cursor):
     return rank, name, country, rR
 
 def main():
-    cursor = getConfig()
+    cursor = goc.getConfig()
     # 数据入库
     # inputDB(cursor)
     # 分析国家保有量
@@ -133,6 +119,7 @@ def main():
     # 实际计算能力与理论计算能力的差距
     # rank, name, country, rR = rmaxRpeak(cursor)
     # print(rank, name, country, rR)
+    print(a)
 
 
 if __name__ == '__main__':

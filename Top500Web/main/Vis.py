@@ -12,6 +12,7 @@ import AnaTop500 as at
 
 app = Flask(__name__)
 
+# 添加响应头
 def Response_headers(content):
     resp = Response(content)
     resp.headers['Access-Control-Allow-Origin'] = '*'

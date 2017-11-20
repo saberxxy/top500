@@ -6,7 +6,7 @@
     <!--<script type="text/javascript" src="http://echarts.baidu.com/dist/echarts.js"></script>-->
     <script src="{{ url_for('static', filename='echarts.js') }}"></script>
     <!-- 引入jquery.js -->
-    <script type="text/javascript" src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery-3.2.1.js') }}"></script>
 
 </head>
 <body>
@@ -99,7 +99,6 @@
                     for(var i=0;i<result["data"].length;i++){
                         nums.push(result["data"][i]["number"]);    //挨个取出数量并填入数量数组
                       }
-                    myChart.hideLoading();    //隐藏加载动画
                     myChart.setOption({        //加载数据图表
                         yAxis: {
                             data: names
@@ -110,9 +109,7 @@
                             data: nums
                         }]
                     });
-
              }
-
         },
          error : function(errorMsg) {
              //请求失败时执行该函数
