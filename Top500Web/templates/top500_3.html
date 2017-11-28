@@ -22,34 +22,37 @@
 
     <!--表格-->
     <span id="main" style="width:1000px;height:750px;">
-        <table id="rank" style="border=2;"></table>
+        <table id="avg" style="border=2;"></table>
     </span>
 
     <script type="text/javascript">
         $.ajax({
          type : "get",
-         url : "/echarts2",
+         url : "/echarts3",
          dataType : "json",        //返回数据形式为json
          success : function(result) {
              //请求成功时执行该函数内容，result即为服务器返回的json对象
              if (result) {
 
-                var rankHtml = "<thead><tr><th style='width:200px'>国家名称</th>";
-                rankHtml = rankHtml + "<th style='width:200px'>该国超级计算机最高排名</th>";
-                rankHtml = rankHtml + "</tr></thead><tbody>";
+                var avgHtml = "<thead><tr><th style='width:200px'>排名</th>";
+                avgHtml = avgHtml + "<th style='width:200px'>计算机名称</th>";
+                avgHtml = avgHtml + "<th style='width:200px'>国家</th>";
+                avgHtml = avgHtml + "<th style='width:200px'>平均每核计算能力</th>";
+                avgHtml = avgHtml + "</tr></thead><tbody>";
 
                 for(var i=0;i<result["data"].length;i++){
-                    //alert(result["data"][i]["country"]);    //挨个取出名称并填入国家数组
-                    //alert(result["data"][i]["rank"]);
-                    rankHtml = rankHtml+"<tr><td style='text-align:center'>"+result["data"][i]["country"]+"</td>";
-                    rankHtml = rankHtml+"<td style='text-align:center'>"+result["data"][i]["rank"]+"</td></tr>";
+                    avgHtml = avgHtml+"<tr><td style='text-align:center'>"+result["data"][i]["rank"]+"</td>";
+                    avgHtml = avgHtml+"<td style='text-align:center'>"+result["data"][i]["name"]+"</td>";
+                    avgHtml = avgHtml+"<td style='text-align:center'>"+result["data"][i]["country"]+"</td>";
+                    avgHtml = avgHtml+"<td style='text-align:center'>"+result["data"][i]["avgcore"]+"</td></tr>";
                 }
-                rankHtml = rankHtml + "</tbody>";
-                $("#rank").html(rankHtml);
+                avgHtml = avgHtml + "</tbody>";
+                $("#avg").html(avgHtml);
 
              }
         }
     })
     </script>
+
 </body>
 </html>

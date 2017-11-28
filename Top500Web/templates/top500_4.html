@@ -5,11 +5,12 @@
     <meta charset="utf-8">
     <!--引入ECharts-->
     <script src="{{ url_for('static', filename='echarts.js') }}"></script>
+    <script src="{{ url_for('static', filename='ecStat.js') }}"></script>
     <!-- 引入jquery.js -->
     <script type="text/javascript" src="{{ url_for('static', filename='jquery-3.2.1.js') }}"></script>
 
-
 </head>
+
 <body>
     <h1 style="font-style:italic">超级计算机TOP500</h1>
     <!--链接布局-->
@@ -21,9 +22,7 @@
         <li><a href="/rr">实际计算能力与理论计算能力差距</a></li>
     </ul>
         <!--绘图-->
-    <div id="main" style="float:left;width:1000px;height:750px;"></div>
-
-
+    <div id="main" style="float:left;width:1200px;height:750px;"></div>
 
     <script type="text/javascript">
     //--------------------------------------------------------------------------------
@@ -37,7 +36,7 @@
         myChart.setOption({
             color:['#c23531'],    //设置颜色
             title: {
-                text: '超级计算机Top500各国保有量'
+                text: '超级计算机Top500性能与功耗的关系'
             },
             tooltip : {
                 trigger: 'axis',
@@ -65,23 +64,24 @@
                 },
             xAxis : [
                 {
-                    type : 'value',
-                    axisLabel : {
-                        formatter: '{value}'
-                    }
-                }
-            ],
-            yAxis : [
-                {
                     type : 'category',
                     boundaryGap : false,
                     data:[]
                 }
             ],
+            yAxis : [
+                {
+                    type : 'value',
+                    axisLabel : {
+                        formatter: '{value}'
+                    }
+                }
+
+            ],
             series : [
                 {
                     name:'最多数量',
-                    type:'bar',
+                    type:'line',
                     data:[],
                     markPoint : {
                         data : [
@@ -102,16 +102,16 @@
 
         $.ajax({
          type : "get",
-         url : "/echarts1",
+         url : "/echarts4",
          dataType : "json",        //返回数据形式为json
          success : function(result) {
              //请求成功时执行该函数内容，result即为服务器返回的json对象
              if (result) {
                     for(var i=0;i<result["data"].length;i++){
-                       names.push(result["data"][i]["country"]);    //挨个取出名称并填入国家数组
+                       names.push(result["data"][i]["rmax"]);    //挨个取出名称并填入国家数组
                      }
                     for(var i=0;i<result["data"].length;i++){
-                        nums.push(result["data"][i]["number"]);    //挨个取出数量并填入数量数组
+                        nums.push(result["data"][i]["power"]);    //挨个取出数量并填入数量数组
                       }
                     myChart.hideLoading();    //隐藏加载动画
                     myChart.setOption({        //加载数据图表
@@ -129,10 +129,6 @@
     })
 
 
-
-
     </script>
-
-
 </body>
 </html>

@@ -85,7 +85,19 @@ def avgCore(cursor):
         name.append(x[1])
         country.append(x[2])
         avgcore.append(x[3])
-    return rank, name, country, avgcore
+    # 处理为前台可接受的格式
+    tp1 = zip(rank, name, country, avgcore)
+    # print(dict1)
+    data = []
+    for i in tp1:
+        # print(i[0])
+        a = {}
+        a['rank'] = i[0]
+        a['name'] = i[1]
+        a['country'] = i[2]
+        a['avgcore'] = i[3]
+        data.append(a)
+    return data
 
 # 计算能力与功耗的关系
 def cpPower(cursor):
@@ -95,7 +107,15 @@ def cpPower(cursor):
     for x in cursor.execute(sql).fetchall():
         rmax.append(x[0])
         power.append(x[1])
-    return rmax, power
+    # 处理为前台可接受的格式
+    dict1 = dict(zip(rmax, power))
+    data = []
+    for c, n in dict1.items():
+        a = {}
+        a['rmax'] = c
+        a['power'] = n
+        data.append(a)
+    return data
 
 # 实际计算能力与理论计算能力的差距
 def rmaxRpeak(cursor):
@@ -109,24 +129,37 @@ def rmaxRpeak(cursor):
         name.append(x[1])
         country.append(x[2])
         rR.append(x[3])
-    return rank, name, country, rR
+    tp1 = zip(rank, name, country, rR)
+    data = []
+    for i in tp1:
+        # print(i[0])
+        a = {}
+        a['rank'] = i[0]
+        a['name'] = i[1]
+        a['country'] = i[2]
+        a['rR'] = i[3]
+        data.append(a)
+    return data
+
 
 def main():
     cursor = goc.getConfig()
     # 数据入库
     # inputDB(cursor)
     # 分析国家保有量
-    a = computerOfCountry(cursor)
+    # a = computerOfCountry(cursor)
     # 分析国家最高排名
     # country, rank = maxRank(cursor)
     # 每核平均计算能力
-    # rank, name, country, avgcore = avgCore(cursor)
-    # 计算能力与核数的关系
-    # rmax, power = cpPower(cursor)
+    # data = avgCore(cursor)
+
+    # 计算能力与功耗的关系
+    # data = cpPower(cursor)
+
     # 实际计算能力与理论计算能力的差距
-    # rank, name, country, rR = rmaxRpeak(cursor)
+    data = rmaxRpeak(cursor)
+    print(data)
     # print(rank, name, country, rR)
-    print(a)
 
 
 if __name__ == '__main__':
